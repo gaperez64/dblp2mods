@@ -58,19 +58,24 @@ def trans(filename):
             print("</namePart></name>")
 
         # Add the type for FWO, some type-related things too
-        pages = pubtype.find("pages").text.split("-")
-        if len(pages) == 1:
-            pages.append(pages[0])
+        pages = pubtype.find("pages")
+        if pages is not None:
+            pages = pages.text.split("-")
+            if len(pages) == 1:
+                pages.append(pages[0])
         if pubtype.tag == "inproceedings":  # C1
             print("<extension type=\"pt\">"
                   "<pubtype src=\"vabb\">VABB-5</pubtype>"
                   "</extension>")
             print("<relatedItem type=\"host\"><titleInfo><title>", end="")
             print(pubtype.find("booktitle").text, end="")
-            print("</title></titleInfo><part><extent unit=\"page\">")
-            print("<start>" + pages[0] + "</start>")
-            print("<end>" + pages[1] + "</end>")
-            print("</extent></part></relatedItem>")
+            print("</title></titleInfo>")
+            if pages is not None:
+                print("<part><extent unit=\"page\">")
+                print("<start>" + pages[0] + "</start>")
+                print("<end>" + pages[1] + "</end>")
+                print("</extent></part>")
+            print("</relatedItem>")
         else:
             assert pubtype.tag == "article"  # A1
             print("<extension type=\"pt\">"
